@@ -1,0 +1,4 @@
+{
+    "mongoURI":"mongodb+srv://omrajesh:omrajesh@homeassistancecluster.omwuxbp.mongodb.net/?retryWrites=true&w=majority",
+    "jwtSecret":"homeassistancesecrettoken"
+}
