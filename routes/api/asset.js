@@ -7,7 +7,7 @@ const { check, validationResult } = require("express-validator");
 
 const User = require("../../models/Users");
 
-// @route  POST api/users
+// @route  POST api/asset
 // @desc   Test route
 // @access public
 router.post(
@@ -27,14 +27,16 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
     try {
-      const { name, password, email, roleid, mobile } = req.body;
+      const {
+        asset_name,
+        registered_to,
+        registered_date,
+        address,
+        land_tax_amount,
+        mobile,
+      } = req.body;
 
-      // See if user exists
-      let user = await User.findOne({ email });
-      if (user) {
-        res.status(400).json({ errors: [{ message: "User Already Exists" }] });
-      }
-      const postUser = {};
+      const postAsset = {};
       if (name) postUser.name = name;
       if (password) postUser.password = password;
       if (password) postUser.displaypassword = password;
