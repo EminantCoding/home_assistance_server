@@ -5,6 +5,19 @@ const { check, validationResult } = require("express-validator");
 
 const Asset = require("../../models/Asset");
 
+// @route  GET api/stateadminauth
+// @desc   Test route
+// @access public
+router.get("/", async (req, res) => {
+  try {
+    const assets = await Asset.find();
+    res.json(assets);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
 // @route  POST api/asset
 // @desc   Test route
 // @access public
