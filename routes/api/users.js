@@ -150,10 +150,21 @@ router.put(
 // @access private
 router.delete("/:userId", async (req, res) => {
   try {
-    const tenantDeed = await User.findByIdAndDelete({
-      _id: req.params.userId,
-    });
-    res.json(tenantDeed);
+    try {
+      // See if user exists
+      let user = await User.findOne({ _id: req.params.userId });
+      if (user) {
+        const user = await User.findByIdAndDelete({
+          _id: req.params.userId,
+        });
+        res.json(user);
+      } else {
+        res.status(400).json("User Does Not Exist...!");
+      }
+    } catch (err) {
+      console.error(err.message);
+      res.status(400).json("User Does Not Exist...!");
+    }
   } catch (error) {
     console.error(error.message);
     res.status(500).json("Server Error");

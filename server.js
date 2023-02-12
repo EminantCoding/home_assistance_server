@@ -13,6 +13,8 @@ app.use("/api/users", require("./routes/api/users"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/asset", require("./routes/api/asset"));
 app.use("/api/tenantAgreement", require("./routes/api/tenantAgreement"));
+app.use("/api/document", require("./routes/api/document"));
+app.use("/api/property-tax", require("./routes/api/propertyTax"));
 
 const PORT = process.env.PORT || 5000;
 

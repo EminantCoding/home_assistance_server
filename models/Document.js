@@ -7,6 +7,5 @@ const DocumentSchema = new mongoose.Schema({
   file_link: { type: String },
   file_description: { type: String },
   created_date: { type: Date, default: Date.now },
-  is_admin: { type: Boolean },
 });
 module.exports = Document = mongoose.model("document", DocumentSchema);
