@@ -29,18 +29,6 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    //   residents_count: { type: Number },
-    // joining_date: { type: Date },
-    // leaving_date: { type: Date },
-    // residents_name: { type: Array },
-    // identity_proof: { type: Array },
-    // advance_amount: { type: Number },
-    // rent_amount: { type: Number },
-    // rent_amount: { type: Number },
-    // percentage_increased: { type: String },
-    // contact_numbers: { type: Array },
-    // rent_due_date: { type: Number },
-    // remarks: { type: String },
     try {
       const {
         asset_name,
