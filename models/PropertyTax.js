@@ -6,9 +6,8 @@ const PropertyTaxSchema = new mongoose.Schema({
   tax_paid_date: { type: Date },
   tax_amount: { type: Number, required: true },
   tax_due_date: { type: Date },
-  leaving_date: { type: Date },
   transaction_mode: { type: Number },
-  status: { type: String },
+  status: { type: Number },
   remarks: { type: String },
 });
 module.exports = PropertyTax = mongoose.model(
