@@ -15,6 +15,11 @@ app.use("/api/asset", require("./routes/api/asset"));
 app.use("/api/tenantAgreement", require("./routes/api/tenantAgreement"));
 app.use("/api/document", require("./routes/api/document"));
 app.use("/api/property-tax", require("./routes/api/propertyTax"));
+app.use("/api/proximity", require("./routes/api/proximity"));
+app.use("/api/notification", require("./routes/api/notification"));
+app.use("/api/reminder", require("./routes/api/reminder"));
+app.use("/api/emergency-contact", require("./routes/api/emergencyContact"));
+app.use("/api/transaction", require("./routes/api/transaction"));
 
 const PORT = process.env.PORT || 5000;
 

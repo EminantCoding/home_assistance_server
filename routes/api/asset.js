@@ -102,35 +102,44 @@ router.put(
     } = req.body;
 
     try {
-      const putAsset = {};
-      if (asset_name) putAsset.asset_name = asset_name;
-      if (registered_to) putAsset.registered_to = registered_to;
-      if (registered_date) putAsset.registered_date = registered_date;
-      if (address) putAsset.address = address;
-      if (land_tax_amount) putAsset.land_tax_amount = land_tax_amount;
-      if (remarks) putAsset.remarks = remarks;
-
-      putAsset.features = {};
-      if (features?.number_of_doors)
-        putAsset.features.number_of_doors = features.number_of_doors;
-      if (features?.number_of_windows)
-        putAsset.features.number_of_windows = features.number_of_windows;
-      if (features?.number_of_taps)
-        putAsset.features.number_of_taps = features.number_of_taps;
-      if (features?.number_of_fans)
-        putAsset.features.number_of_fans = features.number_of_fans;
-      if (features?.number_of_bulbs)
-        putAsset.features.number_of_bulbs = features.number_of_bulbs;
-      if (features?.has_sump !== undefined)
-        putAsset.features.has_sump = features.has_sump;
-      if (features?.is_rented !== undefined) {
-        putAsset.features.is_rented = features.is_rented;
-      }
-      const result = await Asset.updateOne(
+      Asset.countDocuments(
         { _id: req.params.assetId },
-        { $set: putAsset }
+        async function (err, count) {
+          if (count > 0) {
+            const putAsset = {};
+            if (asset_name) putAsset.asset_name = asset_name;
+            if (registered_to) putAsset.registered_to = registered_to;
+            if (registered_date) putAsset.registered_date = registered_date;
+            if (address) putAsset.address = address;
+            if (land_tax_amount) putAsset.land_tax_amount = land_tax_amount;
+            if (remarks) putAsset.remarks = remarks;
+
+            putAsset.features = {};
+            if (features?.number_of_doors)
+              putAsset.features.number_of_doors = features.number_of_doors;
+            if (features?.number_of_windows)
+              putAsset.features.number_of_windows = features.number_of_windows;
+            if (features?.number_of_taps)
+              putAsset.features.number_of_taps = features.number_of_taps;
+            if (features?.number_of_fans)
+              putAsset.features.number_of_fans = features.number_of_fans;
+            if (features?.number_of_bulbs)
+              putAsset.features.number_of_bulbs = features.number_of_bulbs;
+            if (features?.has_sump !== undefined)
+              putAsset.features.has_sump = features.has_sump;
+            if (features?.is_rented !== undefined) {
+              putAsset.features.is_rented = features.is_rented;
+            }
+            const result = await Asset.updateOne(
+              { _id: req.params.assetId },
+              { $set: putAsset }
+            );
+            res.json(result);
+          } else {
+            res.status(400).json("Record Does Not Exist...!!");
+          }
+        }
       );
-      res.json(result);
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
@@ -143,10 +152,19 @@ router.put(
 // @access private
 router.delete("/:assetId", async (req, res) => {
   try {
-    const user = await Asset.findByIdAndDelete({
-      _id: req.params.assetId,
-    });
-    res.json(user);
+    Asset.countDocuments(
+      { _id: req.params.assetId },
+      async function (err, count) {
+        if (count > 0) {
+          const user = await Asset.findByIdAndDelete({
+            _id: req.params.assetId,
+          });
+          res.json(user);
+        } else {
+          res.status(400).json("Record Does Not Exist...!!");
+        }
+      }
+    );
   } catch (error) {
     console.error(error.message);
     res.status(500).json("Server Error");

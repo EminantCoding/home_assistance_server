@@ -93,21 +93,31 @@ router.put(
     } = req.body;
 
     try {
-      const putPropertyTax = {};
-      if (asset_name) putPropertyTax.asset_name = asset_name;
-      if (tax_type) putPropertyTax.tax_type = tax_type;
-      if (tax_paid_date) putPropertyTax.tax_paid_date = tax_paid_date;
-      if (tax_amount) putPropertyTax.tax_amount = tax_amount;
-      if (tax_due_date) putPropertyTax.tax_due_date = tax_due_date;
-      if (transaction_mode) putPropertyTax.transaction_mode = transaction_mode;
-      if (status) putPropertyTax.status = status;
-      if (remarks) putPropertyTax.remarks = remarks;
-
-      const result = await PropertyTax.updateOne(
+      PropertyTax.countDocuments(
         { _id: req.params.propertyTaxId },
-        { $set: putPropertyTax }
+        async function (err, count) {
+          if (count > 0) {
+            const putPropertyTax = {};
+            if (asset_name) putPropertyTax.asset_name = asset_name;
+            if (tax_type) putPropertyTax.tax_type = tax_type;
+            if (tax_paid_date) putPropertyTax.tax_paid_date = tax_paid_date;
+            if (tax_amount) putPropertyTax.tax_amount = tax_amount;
+            if (tax_due_date) putPropertyTax.tax_due_date = tax_due_date;
+            if (transaction_mode)
+              putPropertyTax.transaction_mode = transaction_mode;
+            if (status) putPropertyTax.status = status;
+            if (remarks) putPropertyTax.remarks = remarks;
+
+            const result = await PropertyTax.updateOne(
+              { _id: req.params.propertyTaxId },
+              { $set: putPropertyTax }
+            );
+            res.json(result);
+          } else {
+            res.status(400).json("Record Does Not Exist...!!");
+          }
+        }
       );
-      res.json(result);
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
@@ -121,23 +131,19 @@ router.put(
 
 router.delete("/:propertyTaxId", async (req, res) => {
   try {
-    try {
-      // See if property Tax exists
-      let propertyTax = await PropertyTax.findOne({
-        _id: req.params.propertyTaxId,
-      });
-      if (propertyTax) {
-        const propertyTax = await PropertyTax.findByIdAndDelete({
-          _id: req.params.propertyTaxId,
-        });
-        res.json(propertyTax);
-      } else {
-        res.status(400).json("Record Does Not Exist...!");
+    PropertyTax.countDocuments(
+      { _id: req.params.propertyTaxId },
+      async function (err, count) {
+        if (count > 0) {
+          const propertyTax = await PropertyTax.findByIdAndDelete({
+            _id: req.params.propertyTaxId,
+          });
+          res.json(propertyTax);
+        } else {
+          res.status(400).json("Record Does Not Exist...!!");
+        }
       }
-    } catch (err) {
-      console.error(err.message);
-      res.status(400).json("Record Does Not Exist...!");
-    }
+    );
   } catch (error) {
     console.error(error.message);
     res.status(500).json("Server Error");

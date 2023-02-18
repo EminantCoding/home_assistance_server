@@ -121,23 +121,32 @@ router.put(
     } = req.body;
 
     try {
-      const putUser = {};
-      if (name) putUser.name = name;
-      if (password) putUser.displaypassword = password;
-      if (email) putUser.email = email;
-      if (roleid) putUser.roleid = roleid;
-      if (mobile) putUser.mobile = mobile;
-      if (created_date) putUser.created_date = created_date;
-      if (tenant_agreement) putUser.tenant_agreement = tenant_agreement;
-
-      const salt = await bcrypt.genSalt(10);
-      putUser.password = await bcrypt.hash(password, salt);
-
-      const result = await User.updateOne(
+      User.countDocuments(
         { _id: req.params.userId },
-        { $set: putUser }
+        async function (err, count) {
+          if (count > 0) {
+            const putUser = {};
+            if (name) putUser.name = name;
+            if (password) putUser.displaypassword = password;
+            if (email) putUser.email = email;
+            if (roleid) putUser.roleid = roleid;
+            if (mobile) putUser.mobile = mobile;
+            if (created_date) putUser.created_date = created_date;
+            if (tenant_agreement) putUser.tenant_agreement = tenant_agreement;
+
+            const salt = await bcrypt.genSalt(10);
+            putUser.password = await bcrypt.hash(password, salt);
+
+            const result = await User.updateOne(
+              { _id: req.params.userId },
+              { $set: putUser }
+            );
+            res.json(result);
+          } else {
+            res.status(400).json("Record Does Not Exist...!!");
+          }
+        }
       );
-      res.json(result);
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
@@ -150,21 +159,19 @@ router.put(
 // @access private
 router.delete("/:userId", async (req, res) => {
   try {
-    try {
-      // See if user exists
-      let user = await User.findOne({ _id: req.params.userId });
-      if (user) {
-        const user = await User.findByIdAndDelete({
-          _id: req.params.userId,
-        });
-        res.json(user);
-      } else {
-        res.status(400).json("User Does Not Exist...!");
+    User.countDocuments(
+      { _id: req.params.userId },
+      async function (err, count) {
+        if (count > 0) {
+          const user = await User.findByIdAndDelete({
+            _id: req.params.userId,
+          });
+          res.json(user);
+        } else {
+          res.status(400).json("Record Does Not Exist...!!");
+        }
       }
-    } catch (err) {
-      console.error(err.message);
-      res.status(400).json("User Does Not Exist...!");
-    }
+    );
   } catch (error) {
     console.error(error.message);
     res.status(500).json("Server Error");

@@ -107,26 +107,37 @@ router.put(
     } = req.body;
 
     try {
-      const putTenantDeed = {};
-      if (asset_name) putTenantDeed.asset_name = asset_name;
-      if (residents_count) putTenantDeed.residents_count = residents_count;
-      if (joining_date) putTenantDeed.joining_date = joining_date;
-      if (leaving_date) putTenantDeed.leaving_date = leaving_date;
-      if (residents_name) putTenantDeed.residents_name = residents_name;
-      if (identity_proof) putTenantDeed.identity_proof = identity_proof;
-      if (advance_amount) putTenantDeed.advance_amount = advance_amount;
-      if (rent_amount) putTenantDeed.rent_amount = rent_amount;
-      if (percentage_increased)
-        putTenantDeed.percentage_increased = percentage_increased;
-      if (contact_numbers) putTenantDeed.contact_numbers = contact_numbers;
-      if (rent_due_date) putTenantDeed.rent_due_date = rent_due_date;
-      if (remarks) putTenantDeed.remarks = remarks;
-
-      const result = await TenantAgreement.updateOne(
+      TenantAgreement.countDocuments(
         { _id: req.params.tenantDeedId },
-        { $set: putTenantDeed }
+        async function (err, count) {
+          if (count > 0) {
+            const putTenantDeed = {};
+            if (asset_name) putTenantDeed.asset_name = asset_name;
+            if (residents_count)
+              putTenantDeed.residents_count = residents_count;
+            if (joining_date) putTenantDeed.joining_date = joining_date;
+            if (leaving_date) putTenantDeed.leaving_date = leaving_date;
+            if (residents_name) putTenantDeed.residents_name = residents_name;
+            if (identity_proof) putTenantDeed.identity_proof = identity_proof;
+            if (advance_amount) putTenantDeed.advance_amount = advance_amount;
+            if (rent_amount) putTenantDeed.rent_amount = rent_amount;
+            if (percentage_increased)
+              putTenantDeed.percentage_increased = percentage_increased;
+            if (contact_numbers)
+              putTenantDeed.contact_numbers = contact_numbers;
+            if (rent_due_date) putTenantDeed.rent_due_date = rent_due_date;
+            if (remarks) putTenantDeed.remarks = remarks;
+
+            const result = await TenantAgreement.updateOne(
+              { _id: req.params.tenantDeedId },
+              { $set: putTenantDeed }
+            );
+            res.json(result);
+          } else {
+            res.status(400).json("Record Does Not Exist...!!");
+          }
+        }
       );
-      res.json(result);
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
@@ -139,10 +150,19 @@ router.put(
 // @access private
 router.delete("/:tenantDeedId", async (req, res) => {
   try {
-    const tenantDeed = await TenantAgreement.findByIdAndDelete({
-      _id: req.params.tenantDeedId,
-    });
-    res.json(tenantDeed);
+    TenantAgreement.countDocuments(
+      { _id: req.params.tenantDeedId },
+      async function (err, count) {
+        if (count > 0) {
+          const tenantDeed = await TenantAgreement.findByIdAndDelete({
+            _id: req.params.tenantDeedId,
+          });
+          res.json(tenantDeed);
+        } else {
+          res.status(400).json("Record Does Not Exist...!!");
+        }
+      }
+    );
   } catch (error) {
     console.error(error.message);
     res.status(500).json("Server Error");

@@ -10,7 +10,7 @@ const TransactionSchema = new mongoose.Schema({
   transaction_mode: { type: Number },
   paid_by: { type: String },
   paid_to: { type: String },
-  status: { type: String },
+  status: { type: Number },
   remarks: { type: String },
 });
 module.exports = Transaction = mongoose.model("transaction", TransactionSchema);

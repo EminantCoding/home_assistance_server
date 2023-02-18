@@ -5,7 +5,7 @@ const NotificationSchema = new mongoose.Schema({
   notification_type: { type: Number, required: true },
   description: { type: String },
   created_date: { type: Date, default: Date.now },
-  status: { type: Boolean },
+  status: { type: Number },
 });
 module.exports = Notification = mongoose.model(
   "notification",

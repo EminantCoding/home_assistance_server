@@ -86,19 +86,29 @@ router.put(
     } = req.body;
 
     try {
-      const putDocuemt = {};
-      if (asset_name) putDocuemt.asset_name = asset_name;
-      if (file_title) putDocuemt.file_title = file_title;
-      if (file_type) putDocuemt.file_type = file_type;
-      if (file_link) putDocuemt.file_link = file_link;
-      if (file_description) putDocuemt.file_description = file_description;
-      if (created_date) putDocuemt.created_date = created_date;
-
-      const result = await Document.updateOne(
+      Document.countDocuments(
         { _id: req.params.documentId },
-        { $set: putDocuemt }
+        async function (err, count) {
+          if (count > 0) {
+            const putDocuemt = {};
+            if (asset_name) putDocuemt.asset_name = asset_name;
+            if (file_title) putDocuemt.file_title = file_title;
+            if (file_type) putDocuemt.file_type = file_type;
+            if (file_link) putDocuemt.file_link = file_link;
+            if (file_description)
+              putDocuemt.file_description = file_description;
+            if (created_date) putDocuemt.created_date = created_date;
+
+            const result = await Document.updateOne(
+              { _id: req.params.documentId },
+              { $set: putDocuemt }
+            );
+            res.json(result);
+          } else {
+            res.status(400).json("Record Does Not Exist...!!");
+          }
+        }
       );
-      res.json(result);
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
@@ -112,23 +122,19 @@ router.put(
 
 router.delete("/:documentId", async (req, res) => {
   try {
-    try {
-      // See if property Tax exists
-      let document = await Document.findOne({
-        _id: req.params.documentId,
-      });
-      if (document) {
-        const document = await Document.findByIdAndDelete({
-          _id: req.params.documentId,
-        });
-        res.json(document);
-      } else {
-        res.status(400).json("Record Does Not Exist...!");
+    Document.countDocuments(
+      { _id: req.params.documentId },
+      async function (err, count) {
+        if (count > 0) {
+          const document = await Document.findByIdAndDelete({
+            _id: req.params.documentId,
+          });
+          res.json(document);
+        } else {
+          res.status(400).json("Record Does Not Exist...!!");
+        }
       }
-    } catch (err) {
-      console.error(err.message);
-      res.status(400).json("Record Does Not Exist...!");
-    }
+    );
   } catch (error) {
     console.error(error.message);
     res.status(500).json("Server Error");
