@@ -4,13 +4,17 @@ const config = require("config");
 const { check, validationResult } = require("express-validator");
 
 const Asset = require("../../models/Asset");
+const auth = require("../../middleware/auth");
 
 // @route  GET api/stateadminauth
 // @desc   Test route
 // @access public
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
   try {
-    const assets = await Asset.find();
+    const assets = await Asset.find()
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
     res.json(assets);
   } catch (err) {
     console.error(err);

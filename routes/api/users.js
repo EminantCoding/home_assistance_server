@@ -11,9 +11,17 @@ const User = require("../../models/Users");
 // @desc   users route
 // @access public
 router.get("/", async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
   try {
-    const users = await User.find().select("-password");
-    res.json(users);
+    const users = await User.find()
+      .select("-password")
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+    const response = {
+      users,
+      pagination: { total: users.length, page, limit },
+    };
+    res.json(response);
   } catch (err) {
     console.error(err);
     res.status(500).send("Server Error");

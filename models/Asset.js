@@ -17,5 +17,7 @@ const AssetSchema = new mongoose.Schema({
     is_rented: { type: Boolean },
   },
   remarks: { type: String },
+  asset_account_number: { type: String },
+  asset_rr_number: { type: String },
 });
 module.exports = Asset = mongoose.model("asset", AssetSchema);

@@ -1,5 +1,9 @@
 const express = require("express");
 const ConnectDB = require("./config/db");
+
+const cors = require("cors");
+const port = 5000;
+
 const app = express();
 
 //Connect Database
@@ -7,6 +11,13 @@ ConnectDB();
 
 // Init Middleware
 app.use(express.json({ extended: false }));
+
+const corsOptions = {
+  origin: "*",
+  optionsSuccessStatus: 200, // For legacy browser support
+};
+// // Add headers before the routes are defined
+app.use(cors(corsOptions));
 
 app.get("/", (req, res) => res.send("Api Running successfully - teehee"));
 app.use("/api/users", require("./routes/api/users"));
@@ -23,4 +34,4 @@ app.use("/api/transaction", require("./routes/api/transaction"));
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server started on Port ${PORT}`));
+app.listen(5000, () => console.log(`Server started on Port ${PORT}`));
